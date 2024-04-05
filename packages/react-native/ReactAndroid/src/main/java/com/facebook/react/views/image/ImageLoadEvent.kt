@@ -18,7 +18,7 @@ private constructor(
     surfaceId: Int,
     viewId: Int,
     @param:ImageEventType private val eventType: Int,
-    private val errorMessage: String? = null,
+    private val error: Throwable? = null,
     private val sourceUri: String? = null,
     private val width: Int = 0,
     private val height: Int = 0,
@@ -44,7 +44,9 @@ private constructor(
             putDouble("progress", loaded / total.toDouble())
           }
           ON_LOAD -> putMap("source", createEventDataSource())
-          ON_ERROR -> putString("error", errorMessage)
+          ON_ERROR -> {
+            putString("error", error?.message)
+          }
         }
       }
 
@@ -136,7 +138,7 @@ private constructor(
 
     @JvmStatic
     public fun createErrorEvent(surfaceId: Int, viewId: Int, throwable: Throwable): ImageLoadEvent =
-        ImageLoadEvent(surfaceId, viewId, ON_ERROR, throwable.message, null, 0, 0, 0, 0)
+        ImageLoadEvent(surfaceId, viewId, ON_ERROR, throwable, null, 0, 0, 0, 0)
 
     @JvmStatic
     public fun createLoadEndEvent(surfaceId: Int, viewId: Int): ImageLoadEvent =
