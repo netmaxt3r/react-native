@@ -643,7 +643,7 @@ public final class NetworkingModule extends NativeNetworkingAndroidSpec {
     mRequestIds.clear();
   }
 
-  private static WritableMap translateHeaders(Headers headers) {
+  public static WritableMap translateHeaders(Headers headers) {
     Bundle responseHeaders = new Bundle();
     for (int i = 0; i < headers.size(); i++) {
       String headerName = headers.name(i);

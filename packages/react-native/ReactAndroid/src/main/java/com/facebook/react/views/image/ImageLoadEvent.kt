@@ -8,8 +8,10 @@
 package com.facebook.react.views.image
 
 import androidx.annotation.IntDef
+import com.facebook.imagepipeline.backends.okhttp3.OkHttpNetworkFetcherException
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.network.NetworkingModule
 import com.facebook.react.uimanager.common.ViewUtil
 import com.facebook.react.uimanager.events.Event
 
@@ -46,6 +48,15 @@ private constructor(
           ON_LOAD -> putMap("source", createEventDataSource())
           ON_ERROR -> {
             putString("error", error?.message)
+            val cause = error?.cause
+            if (cause != null && cause is OkHttpNetworkFetcherException) {
+              if (cause.responseCode != null) {
+                putInt("responseCode", cause.responseCode!!)
+              }
+              if (cause.responseHeaders != null) {
+                putMap("httpResponseHeaders", NetworkingModule.translateHeaders(cause.responseHeaders))
+              }
+            }
           }
         }
       }
